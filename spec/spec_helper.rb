@@ -1,17 +1,13 @@
-require 'rubygems'
+$LOAD_PATH.unshift File.expand_path('../lib', File.dirname(__FILE__))
 require 'rspec'
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-
 require 'chargify_api_ares'
-
 require 'fakeweb'
 require 'mocks/fake_resource'
-ActiveResource::Base.send :include, ActiveResource::FakeResource
-FakeWeb.allow_net_connect = false
 require 'factory_girl'
 require 'faker'
 require 'factories'
+
+ActiveResource::Base.send :include, ActiveResource::FakeResource
 
 Chargify.configure do |c|
   c.subdomain = 'test'
@@ -19,6 +15,10 @@ Chargify.configure do |c|
 end
  
 RSpec.configure do |config|
+  config.before do
+    FakeWeb.allow_net_connect = false
+  end
+  
   config.after(:each) do
     ActiveResource::FakeResource.clean
   end
